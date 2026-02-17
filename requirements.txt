@@ -1,0 +1,9 @@
+# Fitness Tracker Dependencies
+
+# For CLI version (main.py, demo.py)
+# No external dependencies - uses only Python standard library
+
+# For Streamlit Web App (app.py)
+streamlit>=1.28.0
+plotly>=5.17.0
+pandas>=2.1.0
