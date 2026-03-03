@@ -46,7 +46,7 @@ class Goal:
     """
     if self.target_value == 0:
       return 0.0
-    percentage = self(self.current_value / self.target_value) * 100
+    percentage = (self.current_value / self.target_value) * 100
     return min(round(percentage, 1), 100)
 
   def mark_completed(self) -> None:
