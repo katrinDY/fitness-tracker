@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Dict
 
-class User():
+class User:
   """
     Represents a user profile with personal information and fitness metrics.
   """

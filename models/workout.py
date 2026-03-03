@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Dict
 
-class Workout():
+class Workout:
   """
     Represents a single workout session with details and calorie calculation.
   """
