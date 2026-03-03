@@ -35,4 +35,5 @@ def demo_workout_class():
     print(f"Workout intensity: {w.get_intensity()}")
     print(f"Notes: {w.notes}")
 
-demo_workout_class()
+if __name__ == "__main__":
+  demo_workout_class()

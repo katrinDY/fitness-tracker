@@ -31,5 +31,5 @@ def demo_user_class():
   user.get_weight_change()
   print(f"User weight updated to: {user.weight} kg")
   
-
-demo_user_class()
+if __name__ == "__main__":
+  demo_user_class()

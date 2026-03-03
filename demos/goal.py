@@ -34,4 +34,5 @@ def demo_goal_class():
   if goal.completed:
     print("🎉 Goal completed!")
 
-demo_goal_class()
+if __name__ == "__main__":
+  demo_goal_class()
