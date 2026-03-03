@@ -8,14 +8,14 @@ class Workout:
   
   # Calorie burn rates per minute by activity (Metabolic Equivalent of Task values approximation)
   CALORIE_RATES = {
-      'running': 10.0,
-      'cycling': 8.0,
-      'swimming': 9.0,
-      'gym': 6.0,
-      'yoga': 3.0,
-      'walking': 4.0,
-      'hiit': 12.0,
-      'dancing': 5.0
+    'running': 10.0,
+    'cycling': 8.0,
+    'swimming': 9.0,
+    'gym': 6.0,
+    'yoga': 3.0,
+    'walking': 4.0,
+    'hiit': 12.0,
+    'dancing': 5.0
   }
 
   def __init__(self, workout_type: str, duration: int, date: datetime = None, notes: str = '', user_weight: float = 70):

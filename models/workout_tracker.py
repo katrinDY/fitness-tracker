@@ -136,7 +136,7 @@ class WorkoutTracker:
       Number of consecutive days with at least one workout
     """
     if not self.workouts:
-        return 0
+      return 0
     
     # Sort workouts by date
     sorted_workouts = sorted(self.workouts, key=lambda w: w.date, reverse=True)
@@ -185,14 +185,14 @@ class WorkoutTracker:
   def load_data(self) -> None:
     """Load data from JSON file."""
     try:
-        with open(self.data_file, 'r', encoding='utf-8') as f:
-          data = json.load(f)
+      with open(self.data_file, 'r', encoding='utf-8') as f:
+        data = json.load(f)
 
-        if data.get('user'):
-          self.user = User.from_dict(data['user'])
-        
-        self.workouts = [Workout.from_dict(w) for w in data.get('workouts', [])]
-        self.goals = [Goal.from_dict(g) for g in data.get('goals', [])]
+      if data.get('user'):
+        self.user = User.from_dict(data['user'])
+      
+      self.workouts = [Workout.from_dict(w) for w in data.get('workouts', [])]
+      self.goals = [Goal.from_dict(g) for g in data.get('goals', [])]
         
     except FileNotFoundError:
       # First run - no data file exists yet
