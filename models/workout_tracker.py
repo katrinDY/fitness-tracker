@@ -198,7 +198,7 @@ class WorkoutTracker:
       # First run - no data file exists yet
       pass
     except Exception as e:
-      print(f"Error loading data: {e}")
+      print(f"Error loading data: {type(e).__name__}: {e}") 
     
   def export_to_csv(self, filename: str = "workouts_export.csv") -> bool:
     """
