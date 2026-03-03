@@ -74,8 +74,8 @@ class Goal:
     """
     if not self.deadline:
       return None
-    remaining_days = self.deadline - datetime.now()
-    return max(remaining_days, 0)
+    delta = self.deadline - datetime.now()
+    return max(0, delta.days)
   
   def to_dict(self) -> Dict:
     """Convert goal data to dictionary for serialization."""
