@@ -93,7 +93,8 @@ class User:
   def from_dict(cls, data: Dict) -> 'User':
     """Create User instance from dictionary."""
     user = cls(
-      name=data['name'],
+      first_name=data['first_name'],
+      last_name=data['last_name'],
       age=data['age'],
       weight=data['weight'],
       height=data['height'],
