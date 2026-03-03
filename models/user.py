@@ -76,7 +76,7 @@ class User:
     current_weight = self.weight_history[-1][1]
     return round(current_weight - first_weight, 2)
   
-  def data_to_dict(self) -> dict:
+  def to_dict(self) -> dict:
     """Convert user data to dictionary for serialization."""
     return {
       'first_name': self.first_name,

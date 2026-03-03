@@ -63,7 +63,7 @@ class Workout:
     else:
       return "High"
   
-  def data_to_dict(self):
+  def to_dict(self):
     """Convert workout data to dictionary for serialization."""
     return {
       'workout_type': self.workout_type,
