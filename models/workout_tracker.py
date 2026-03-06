@@ -1,8 +1,8 @@
 from datetime import datetime, timedelta
 from typing import Optional, List, Dict
-from user import User
-from workout import Workout
-from goal import Goal
+from .user import User
+from .workout import Workout
+from .goal import Goal
 import json
 
 class WorkoutTracker:
