@@ -4,6 +4,7 @@ Interactive web interface for the fitness tracker.
 """
 
 import streamlit as st
+from models.workout_tracker import WorkoutTracker
 
 # Page configuration
 st.set_page_config(
@@ -27,3 +28,9 @@ st.markdown("""
   }
 </style>
 """, unsafe_allow_html=True)
+
+# Initialize session state
+if 'tracker' not in st.session_state:
+  st.session_state.tracker = WorkoutTracker("streamlit_fitness_data.json")
+
+tracker = st.session_state.tracker
