@@ -3,9 +3,11 @@ Fitness Tracker - Streamlit Web Application
 Interactive web interface for the fitness tracker.
 """
 
+from datetime import datetime
 import streamlit as st
 from models.workout_tracker import WorkoutTracker
 from models.user import User
+from models.workout import Workout
 
 # Page configuration
 st.set_page_config(
@@ -41,6 +43,45 @@ def dashboard_page():
 
 def add_workout_page():
   """Page for adding new workouts."""
+  st.header("💪 Add New Workout")
+  
+  if not tracker.user:
+    st.warning("⚠️ Please set up your user profile first!")
+    return
+  
+  with st.form("add_workout_form"):
+    col1, col2 = st.columns(2)
+    
+    with col1:
+      workout_type = st.selectbox(
+        "Workout Type",
+        options=list(Workout.CALORIE_RATES.keys()),
+        format_func=lambda x: x.capitalize()
+      )
+      duration = st.number_input("Duration (minutes)", min_value=1, max_value=300, value=30)
+      notes = st.text_area("Notes (optional)", placeholder="How did you feel? Any observations?")
+      
+    with col2:
+      workout_date = st.date_input("Workout Date", value=datetime.now())
+      workout_time = st.time_input("Workout Time", value=datetime.now().time())
+    
+    submitted = st.form_submit_button("➕ Add Workout")
+    
+    if submitted:
+      workout_datetime = datetime.combine(workout_date, workout_time)
+      workout = Workout(workout_type, duration, workout_datetime, notes, tracker.user.weight)
+      tracker.add_workout(workout)
+      st.success(f"✅ Workout added! You burned {workout.calories_burned} calories! 🔥")
+      
+      # Check for goal completion
+      for goal in tracker.goals:
+        if goal.completed and goal.completed_at and \
+          (datetime.now() - goal.completed_at).total_seconds() < 5:
+          st.balloons()
+          st.success(f"🎉 Goal achieved: {goal.description}!"
+          )
+      st.rerun()
+
 
 def workout_history_page():
   """Page showing workout history with filtering options."""
