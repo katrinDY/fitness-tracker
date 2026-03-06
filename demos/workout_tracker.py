@@ -12,7 +12,7 @@ def demo_workout_tracker():
   print("DEMO: WORKOUT TRACKER CLASS")
   
   # Create tracker with demo data file
-  tracker = WorkoutTracker(f"demo_fitness_data_{datetime.now().timestamp()}.json")
+  tracker = WorkoutTracker("demo_fitness_data.json")
   
   # Set user
   user = User("Maria", "Georgieva", 25, 65, 168, "female")
