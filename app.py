@@ -5,6 +5,7 @@ Interactive web interface for the fitness tracker.
 
 import streamlit as st
 from models.workout_tracker import WorkoutTracker
+from models.user import User
 
 # Page configuration
 st.set_page_config(
@@ -52,6 +53,43 @@ def analytics_page():
 
 def setup_user_profile():
   """User profile setup and update."""
+  st.header("👤 User Profile")
+  
+  with st.form("user_profile_form"):
+    col1, col2 = st.columns(2)
+    
+    with col1:
+      first_name = st.text_input("First Name", value=tracker.user.first_name if tracker.user else "")
+      age = st.number_input("Age", min_value=25, max_value=120, value=tracker.user.age if tracker.user else 25)
+      gender = st.selectbox("Gender", ["male", "female"], index=0 if not tracker.user else (0 if tracker.user.gender == "male" else 1))
+
+    with col2:
+      last_name = st.text_input("Last Name", value=tracker.user.last_name if tracker.user else "")
+      height = st.number_input("Height (cm)", min_value=100.0, max_value=250.0, value=float(tracker.user.height) if tracker.user else 170.0, step=0.1)
+      weight = st.number_input("Weight (kg)", min_value=30.0, max_value=200.0, value=float(tracker.user.weight) if tracker.user else 70.0, step=0.1)
+  
+    submitted = st.form_submit_button("💾 Save Profile")
+  
+    if submitted:
+      user = User(first_name, last_name, age, weight, height, gender)
+      tracker.set_user(user)
+      st.success("✅ Profile saved successfully!")
+      st.rerun()
+  
+  # Display current profile info if it exists
+  if tracker.user:
+    st.divider()
+    col1, col2, col3, col4 = st.columns(4)
+    
+    with col1:
+      st.metric("BMI", tracker.user.calculate_bmi())
+    with col2:
+      st.metric("BMI Category", tracker.user.get_bmi_category())
+    with col3:
+      weight_change = tracker.user.get_weight_change()
+      st.metric("Weight Change", f"{weight_change} kg")
+    with col4:
+      st.metric("Age", f"{tracker.user.age} years")
 
 def main():
   """Main application"""
