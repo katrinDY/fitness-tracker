@@ -99,8 +99,8 @@ class Goal:
       current_value=data['current_value'],
       deadline=datetime.fromisoformat(data['deadline']) if data['deadline'] else None,
       description=data['description'],
-      created_at=datetime.fromisoformat(data['created_at']),
-      completed=data['completed'],
-      completed_at=datetime.fromisoformat(data['completed_at']) if data['completed_at'] else None
     )
+    goal.created_at = datetime.fromisoformat(data['created_at'])
+    goal.completed = data['completed']
+    goal.completed_at = datetime.fromisoformat(data['completed_at']) if data['completed_at'] else None
     return goal
