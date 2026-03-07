@@ -1,0 +1,71 @@
+{
+  "user": {
+    "first_name": "Maria",
+    "last_name": "Georgieva",
+    "age": 25,
+    "weight": 65,
+    "height": 168,
+    "gender": "female",
+    "created_at": "2026-03-06T21:23:25.508851",
+    "weight_history": [
+      [
+        "2026-03-06T21:23:25.508868",
+        65
+      ]
+    ]
+  },
+  "workouts": [
+    {
+      "workout_type": "running",
+      "duration": 30,
+      "date": "2026-03-02T21:23:25.508892",
+      "notes": "",
+      "user_weight": 65,
+      "calories_burned": 325.0
+    },
+    {
+      "workout_type": "yoga",
+      "duration": 45,
+      "date": "2026-03-03T21:23:25.509582",
+      "notes": "",
+      "user_weight": 65,
+      "calories_burned": 146.25
+    },
+    {
+      "workout_type": "gym",
+      "duration": 60,
+      "date": "2026-03-04T21:23:25.509786",
+      "notes": "",
+      "user_weight": 65,
+      "calories_burned": 390.0
+    },
+    {
+      "workout_type": "cycling",
+      "duration": 40,
+      "date": "2026-03-05T21:23:25.509957",
+      "notes": "",
+      "user_weight": 65,
+      "calories_burned": 346.66666666666663
+    },
+    {
+      "workout_type": "swimming",
+      "duration": 35,
+      "date": "2026-03-06T21:23:25.510122",
+      "notes": "",
+      "user_weight": 65,
+      "calories_burned": 341.25
+    }
+  ],
+  "goals": [
+    {
+      "goal_type": "workout_count",
+      "target_value": 10,
+      "current_value": 5,
+      "deadline": null,
+      "description": "Reach 10 workouts",
+      "created_at": "2026-03-06T21:23:25.510310",
+      "completed": false,
+      "completed_at": null
+    }
+  ]
+}
