@@ -3,7 +3,8 @@ Fitness Tracker - Streamlit Web Application
 Interactive web interface for the fitness tracker.
 """
 
-from datetime import datetime
+from datetime import datetime, timedelta
+import pandas as pd
 import streamlit as st
 from models.workout_tracker import WorkoutTracker
 from models.user import User
@@ -85,6 +86,105 @@ def add_workout_page():
 
 def workout_history_page():
   """Page showing workout history with filtering options."""
+  st.header("📅 Workout History")
+  
+  if not tracker.workouts:
+    st.info("No workouts logged yet. Start by adding a workout!")
+    return
+
+  # Filter options
+  col1, col2, col3 = st.columns(3)
+  
+  with col1:
+    filter_type = st.selectbox(
+      "Filter by type",
+      ["All"] + list(set(w.workout_type for w in tracker.workouts)),
+    )
+  
+  with col2:
+    date_range = st.selectbox(
+      "Date Range",
+      ["All Time", "This Week", "This Month", "Last 7 Days", "Last 30 Days"]
+    )
+  
+  with col3:
+    sort_by = st.selectbox(
+      "Sort by",
+      ["Date (newest)", "Date (oldest)", "Calories", "Duration (longest)"]
+    )
+
+  # Apply filters
+  filtered_workouts = tracker.workouts.copy()
+  
+  if filter_type != "All":
+    filtered_workouts = [w for w in filtered_workouts if w.workout_type == filter_type]
+    
+  if date_range == "This Week":
+    today = datetime.now()
+    week_start = today - timedelta(days=today.weekday())
+    filtered_workouts = tracker.get_workouts_by_date_range(week_start, today)
+  elif date_range == "This Month":
+    today = datetime.now()
+    month_start = today.replace(day=1)
+    filtered_workouts = tracker.get_workouts_by_date_range(month_start, today)
+  elif date_range == "Last 7 Days":
+    today = datetime.now()
+    last_week = today - timedelta(days=7)
+    filtered_workouts = tracker.get_workouts_by_date_range(last_week, today)
+  elif date_range == "Last 30 Days":
+    today = datetime.now()
+    last_month = today - timedelta(days=30)
+    filtered_workouts = tracker.get_workouts_by_date_range(last_month, today)
+  
+  # Sort
+  if sort_by == "Date (Newest)":
+    filtered_workouts.sort(key=lambda w: w.date, reverse=True)
+  elif sort_by == "Date (Oldest)":
+    filtered_workouts.sort(key=lambda w: w.date)
+  elif sort_by == "Calories":
+    filtered_workouts.sort(key=lambda w: w.calories_burned, reverse=True)
+  elif sort_by == "Duration":
+    filtered_workouts.sort(key=lambda w: w.duration, reverse=True)
+    
+  # Display summary
+  st.divider()
+  col1, col2, col3, col4 = st.columns(4)
+  
+  total_duration = sum(w.duration for w in filtered_workouts)
+  total_calories = sum(w.calories_burned for w in filtered_workouts)
+  
+  with col1:
+    st.metric("Total Workouts", len(filtered_workouts))
+  with col2:
+    st.metric("Total Duration", f"{total_duration} min")
+  with col3:
+    st.metric("Total Calories", f"{total_calories:,} cal")
+  with col4:
+    avg_duration = total_duration / len(filtered_workouts) if filtered_workouts else 0
+    st.metric("Avg Duration", f"{avg_duration:.1f} min")
+    
+  # Display workouts
+  st.divider()
+  
+  if not filtered_workouts:
+    st.info("No workouts match your filters.")
+    return
+
+  # Create DataFrame for display
+  workout_data = []
+  for w in filtered_workouts:
+    workout_data.append({
+      "Date": w.date.strftime("%Y-%m-%d"),
+      "Time": w.date.strftime("%H:%M"),
+      "Type": w.workout_type.capitalize(),
+      "Duration (min)": w.duration,
+      "Calories": w.calories_burned,
+      "Intensity": w.get_intensity(),
+      "Notes": w.notes[:50] + "..." if len(w.notes) > 50 else w.notes
+    })
+  
+  df = pd.DataFrame(workout_data)
+  st.dataframe(df, use_container_width=True, hide_index=True)
 
 def goals_page():
   """Page for setting and tracking fitness goals."""
