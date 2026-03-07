@@ -44,6 +44,40 @@ streamlit run app.py
 - Personal records and achievements
 - Progress visualization
 
+## 📸 Screenshots
+
+### Dashboard
+An overview of your fitness activity including total workouts, duration, calories burned, average duration, and current streak. Includes a calories-over-time line chart and workout type distribution donut chart.
+
+![Dashboard](screenshots/dashboard.png)
+
+### Add Workout
+Log a new workout session by selecting the type, date, duration, time, and optional notes. Calories are calculated automatically based on your profile.
+
+![Add Workout](screenshots/add-workout.png)
+
+### Workout History
+Browse all past workouts in a filterable, sortable table. Filter by workout type, date range, and sort by date, calories, or duration.
+
+![Workout History](screenshots/workout-history.png)
+
+### Goals
+Create and track fitness goals by workout count, total calories, or total duration. View progress bars for active goals and a log of completed goals.
+
+![Goals](screenshots/goals.png)
+
+### Advanced Analytics
+Visualise your training patterns with monthly workout comparisons, intensity distribution, and average duration by workout type.
+
+![Advanced Analytics](screenshots/analytics.png)
+
+### User Profile
+Set up and update your personal profile including name, age, height, weight, and gender. Displays your calculated BMI, BMI category, and weight change over time.
+
+![User Profile](screenshots/user-profile.png)
+
+---
+
 ## 📋 Requirements
 
 **For CLI Version (main.py):**
