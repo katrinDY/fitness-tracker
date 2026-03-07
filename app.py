@@ -6,6 +6,8 @@ Interactive web interface for the fitness tracker.
 from datetime import datetime, timedelta
 import pandas as pd
 import streamlit as st
+import plotly.express as px
+import plotly.graph_objects as go
 from models.workout_tracker import WorkoutTracker
 from models.user import User
 from models.workout import Workout
@@ -39,8 +41,111 @@ if 'tracker' not in st.session_state:
 
 tracker = st.session_state.tracker
 
+TOTAL_WORKOUTS = "Total Workouts"
+
 def dashboard_page():
   """Dashboard page showing workout summary and analytics."""
+  st.header("📊 Dashboard")
+  
+  if not tracker.workouts:
+    st.info("No data yet. Add some workouts to see your progress!")
+    return
+  
+  # Overall statistics
+  stats = tracker.get_total_stats()
+  
+  col1, col2, col3, col4, col5 = st.columns(5)
+  
+  with col1:
+    st.metric(TOTAL_WORKOUTS, stats['total_workouts'])
+  with col2:
+    st.metric("Total Duration", f"{stats['total_duration']} min")
+  with col3:
+    st.metric("Total Calories", f"{stats['total_calories']:,}")
+  with col4:
+    st.metric("Avg Duration", f"{stats['avg_duration']:.1f} min")
+  with col5:
+    st.metric("Current Streak", f"{stats['current_streak']} 🔥")
+  
+  st.divider()
+  
+  # Charts
+  col1, col2 = st.columns(2)
+  
+  with col1:
+    st.subheader("📈 Calories Over Time")
+  
+    # Prepare data for line chart
+    workout_dates = [w.date.strftime("%Y-%m-%d") for w in tracker.workouts]
+    workout_calories = [w.calories_burned for w in tracker.workouts]
+    
+    fig = px.line(
+      x=workout_dates,
+      y=workout_calories,
+      labels={'x': 'Date', 'y': 'Calories Burned'},
+      markers=True
+    )
+    
+    fig.update_layout(showlegend=False, height=300)
+    st.plotly_chart(fig, use_container_width=True)
+  
+  with col2:
+    st.subheader("🥧 Workout Types Distribution")
+    
+    # Count workout types
+    workout_counts = {}
+    for w in tracker.workouts:
+      workout_counts[w.workout_type.capitalize()] = workout_counts.get(w.workout_type.capitalize(), 0) + 1
+    
+    fig = px.pie(
+      names=list(workout_counts.keys()),
+      values=list(workout_counts.values()),
+      hole=0.4
+    )
+    fig.update_layout(height=300)
+    st.plotly_chart(fig, use_container_width=True)
+  
+  # Weekly breakdown
+  st.divider()
+  st.subheader("📅 This Week's Activity")
+  
+  weekly = tracker.get_weekly_summary()
+  
+  col1, col2, col3 = st.columns(3)
+  with col1:
+    st.metric("Workouts This Week", weekly['workout_count'])
+  with col2:
+    st.metric("Duration This Week", f"{weekly['total_duration']} min")
+  with col3:
+    st.metric("Calories This Week", f"{weekly['total_calories']:,}")
+  
+  # Daily breakdown
+  today = datetime.now()
+  week_start = today - timedelta(days=today.weekday())
+  
+  daily_data = []
+  for i in range(7):
+    day = week_start + timedelta(days=i)
+    day_workouts = [w for w in tracker.workouts if w.date.date() == day.date()]
+    
+    daily_data.append({
+      "Day": day.strftime("%a"),
+      "Workouts": len(day_workouts),
+      "Duration": sum(w.duration for w in day_workouts),
+      "Calories": sum(w.calories_burned for w in day_workouts)
+    })
+  
+  df = pd.DataFrame(daily_data)
+  
+  fig = go.Figure()
+  fig.add_trace(go.Bar(x=df['Day'], y=df['Calories'], name='Calories'))
+  fig.update_layout(
+    title="Daily Calorie Burn This Week",
+    xaxis_title="Day",
+    yaxis_title="Calories",
+    height=300
+  )
+  st.plotly_chart(fig, use_container_width=True)
 
 def add_workout_page():
   """Page for adding new workouts."""
@@ -154,7 +259,7 @@ def workout_history_page():
   total_calories = sum(w.calories_burned for w in filtered_workouts)
   
   with col1:
-    st.metric("Total Workouts", len(filtered_workouts))
+    st.metric(TOTAL_WORKOUTS, len(filtered_workouts))
   with col2:
     st.metric("Total Duration", f"{total_duration} min")
   with col3:
@@ -258,7 +363,7 @@ def main():
     # Quick stats
     if tracker.workouts:
       st.subheader("📊 Quick Stats")
-      st.metric("Total Workouts", len(tracker.workouts))
+      st.metric(TOTAL_WORKOUTS, len(tracker.workouts))
       st.metric("Total Duration (min)", sum(w.duration for w in tracker.workouts))
       st.metric("Total Calories Burned", sum(w.calories_burned for w in tracker.workouts))
 
