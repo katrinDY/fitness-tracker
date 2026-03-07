@@ -11,6 +11,7 @@ import plotly.graph_objects as go
 from models.workout_tracker import WorkoutTracker
 from models.user import User
 from models.workout import Workout
+from models.goal import Goal
 
 # Page configuration
 st.set_page_config(
@@ -188,7 +189,6 @@ def add_workout_page():
           )
       st.rerun()
 
-
 def workout_history_page():
   """Page showing workout history with filtering options."""
   st.header("📅 Workout History")
@@ -293,6 +293,100 @@ def workout_history_page():
 
 def goals_page():
   """Page for setting and tracking fitness goals."""
+  st.header("🎯 Goals")
+  
+  # Add new goal
+  with st.expander("➕ Create New Goal"):
+    with st.form("add_goal_form"):
+      goal_type = st.selectbox(
+        "Goal Type",
+        ["workout_count", "total_calories", "total_duration"],
+        format_func=lambda x: {
+          "workout_count": "Workout Count",
+          "total_calories": "Total Calories",
+          "total_duration": "Total Duration (minutes)"
+        }[x]
+      )
+      
+      col1, col2 = st.columns(2)
+      
+      with col1:
+        target_value = st.number_input("Target Value", min_value=1.0, value=20.0)
+      
+      with col2:
+        has_deadline = st.checkbox("Set Deadline")
+        deadline = None
+        if has_deadline:
+          deadline = st.date_input("Deadline", value=datetime.now() + timedelta(days=30))
+      
+      description = st.text_input("Description", placeholder="e.g., Complete 20 workouts this month")
+      
+      submitted = st.form_submit_button("Create Goal")
+      
+      if submitted:
+        # Calculate current value
+        current_value = 0
+        if goal_type == "workout_count":
+          current_value = len(tracker.workouts)
+        elif goal_type == "total_calories":
+          current_value = sum(w.calories_burned for w in tracker.workouts)
+        elif goal_type == "total_duration":
+          current_value = sum(w.duration for w in tracker.workouts)
+        
+        goal = Goal(
+          goal_type=goal_type,
+          target_value=target_value,
+          current_value=current_value,
+          deadline=datetime.combine(deadline, datetime.min.time()) if deadline else None,
+          description=description
+        )
+        
+        tracker.add_goal(goal)
+        st.success("✅ Goal created!")
+        st.rerun()
+  
+  # Display active goals
+  st.divider()
+  active_goals = tracker.get_active_goals()
+  
+  if active_goals:
+    st.subheader("🎯 Active Goals")
+    
+    for goal in active_goals:
+      with st.container():
+        col1, col2 = st.columns([3, 1])
+        
+        with col1:
+          st.write(f"**{goal.description}**")
+          progress = goal.get_progress_percentage()
+          st.progress(progress / 100)
+          st.caption(f"{goal.current_value:.0f} / {goal.target_value:.0f}")
+        
+        with col2:
+          if goal.deadline:
+            days_left = goal.days_remaining()
+            if goal.is_overdue():
+              st.error("⚠️ Overdue!")
+            else:
+              st.info(f"⏰ {days_left} days left")
+          else:
+            st.info("No deadline")
+        
+        st.divider()
+  else:
+    st.info("No active goals. Create one to get started!")
+  
+  # Display completed goals
+  completed_goals = tracker.get_completed_goals()
+  
+  if completed_goals:
+    st.subheader("✅ Completed Goals")
+    
+    for goal in completed_goals:
+      with st.container():
+        st.write(f"**{goal.description}**")
+        st.caption(f"Completed on {goal.completed_at.strftime('%Y-%m-%d')}")
+        st.divider()
 
 def analytics_page():
   """Page showing analytics and visualizations of workout data."""
