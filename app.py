@@ -390,6 +390,79 @@ def goals_page():
 
 def analytics_page():
   """Page showing analytics and visualizations of workout data."""
+  st.header("📈 Advanced Analytics")
+    
+  if not tracker.workouts:
+    st.info("Add workouts to see analytics!")
+    return
+  
+  # Monthly comparison
+  st.subheader("📆 Monthly Comparison")
+  
+  monthly_data = {}
+  for workout in tracker.workouts:
+    month_key = workout.date.strftime("%Y-%m")
+    if month_key not in monthly_data:
+      monthly_data[month_key] = {"count": 0, "duration": 0, "calories": 0}
+    
+    monthly_data[month_key]["count"] += 1
+    monthly_data[month_key]["duration"] += workout.duration
+    monthly_data[month_key]["calories"] += workout.calories_burned
+  
+  months = sorted(monthly_data.keys())
+  
+  fig = go.Figure()
+  fig.add_trace(go.Bar(
+    x=months,
+    y=[monthly_data[m]["count"] for m in months],
+    name='Workout Count',
+    marker_color='lightblue'
+  ))
+  fig.update_layout(
+    title="Workouts Per Month",
+    xaxis_title="Month",
+    yaxis_title="Count",
+    height=300
+  )
+  st.plotly_chart(fig, use_container_width=True)
+  
+  # Performance metrics
+  st.divider()
+  st.subheader("💪 Performance Metrics")
+  
+  col1, col2 = st.columns(2)
+  
+  with col1:
+    # Intensity distribution
+    intensity_counts = {"Low": 0, "Medium": 0, "High": 0}
+    for w in tracker.workouts:
+      intensity_counts[w.get_intensity()] += 1
+    
+    fig = px.bar(
+      x=list(intensity_counts.keys()),
+      y=list(intensity_counts.values()),
+      labels={'x': 'Intensity', 'y': 'Count'},
+      title="Workout Intensity Distribution"
+    )
+    st.plotly_chart(fig, use_container_width=True)
+    
+  with col2:
+    # Average duration by type
+    type_durations = {}
+    for w in tracker.workouts:
+      if w.workout_type not in type_durations:
+        type_durations[w.workout_type] = []
+      type_durations[w.workout_type].append(w.duration)
+    
+    avg_durations = {k: sum(v)/len(v) for k, v in type_durations.items()}
+    
+    fig = px.bar(
+      x=[k.capitalize() for k in avg_durations.keys()],
+      y=list(avg_durations.values()),
+      labels={'x': 'Workout Type', 'y': 'Avg Duration (min)'},
+      title="Average Duration by Type"
+    )
+    st.plotly_chart(fig, use_container_width=True)
 
 def setup_user_profile():
   """User profile setup and update."""
