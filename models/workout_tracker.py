@@ -27,6 +27,7 @@ class WorkoutTracker:
   def set_user(self, user: User) -> None:
     """Set the user profile."""
     self.user = user
+    self.save_data()
   
   def add_workout(self, workout: Workout) -> None:
     """
