@@ -36,7 +36,8 @@ def setup_user(tracker: WorkoutTracker) -> None:
   """Create or update user profile."""
   print_header("USER PROFILE SETUP")
   
-  name = input("Enter your name: ").strip()
+  first_name = input("Enter your first name: ").strip()
+  last_name = input("Enter your last name: ").strip()
   
   while True:
     try:
@@ -74,7 +75,7 @@ def setup_user(tracker: WorkoutTracker) -> None:
       break
     print("❌ Please enter 'male' or 'female'.")
   
-  user = User(name, age, weight, height, gender)
+  user = User(first_name, last_name, age, weight, height, gender)
   tracker.set_user(user)
   tracker.save_data()
   
@@ -90,7 +91,7 @@ def view_profile(tracker: WorkoutTracker) -> None:
   
   user = tracker.user
   print_header("YOUR PROFILE")
-  print(f"Name: {user.name}")
+  print(f"Name: {user.first_name} {user.last_name}")
   print(f"Age: {user.age} years")
   print(f"Weight: {user.weight} kg")
   print(f"Height: {user.height} cm")
@@ -474,7 +475,7 @@ def main():
     print("\n👋 First time here? Let's set up your profile!")
     setup_user(tracker)
   else:
-    print(f"\n👋 Welcome back, {tracker.user.name}!")
+    print(f"\n👋 Welcome back, {tracker.user.first_name} {tracker.user.last_name}!")
     
     # Show quick stats
     if tracker.workouts:
