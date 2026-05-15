@@ -392,11 +392,11 @@ def add_new_goal(tracker: WorkoutTracker) -> None:
   goal = Goal(
     goal_type=goal_type,
     target_value=target,
-    current_value=current_value,
     deadline=deadline,
     description=description
   )
-  
+  goal.update_progress(current_value)
+
   tracker.add_goal(goal)
   print(f"\n✅ Goal created! Current progress: {goal.get_progress_percentage()}%")
 
