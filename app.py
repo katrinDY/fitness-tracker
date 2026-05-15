@@ -227,19 +227,19 @@ def workout_history_page():
   if date_range == "This Week":
     today = datetime.now()
     week_start = today - timedelta(days=today.weekday())
-    filtered_workouts = tracker.get_workouts_by_date_range(week_start, today)
+    filtered_workouts = [w for w in filtered_workouts if week_start <= w.date <= today]
   elif date_range == "This Month":
     today = datetime.now()
     month_start = today.replace(day=1)
-    filtered_workouts = tracker.get_workouts_by_date_range(month_start, today)
+    filtered_workouts = [w for w in filtered_workouts if month_start <= w.date <= today]
   elif date_range == "Last 7 Days":
     today = datetime.now()
     last_week = today - timedelta(days=7)
-    filtered_workouts = tracker.get_workouts_by_date_range(last_week, today)
+    filtered_workouts = [w for w in filtered_workouts if last_week <= w.date <= today]
   elif date_range == "Last 30 Days":
     today = datetime.now()
     last_month = today - timedelta(days=30)
-    filtered_workouts = tracker.get_workouts_by_date_range(last_month, today)
+    filtered_workouts = [w for w in filtered_workouts if last_month <= w.date <= today]
   
   # Sort
   if sort_by == "Date (Newest)":
